@@ -21,14 +21,14 @@
     <h1 id="header">Генериране на работен график</h1>
     <label>Имена на работници разделени със запетая (броя на елементи в това поле, трябва да е равен на броя на
         елементи в долното поле):</label>
-    <input type="text" placeholder="Иван,Гошо,Пешо,Тошо,Димитър,Миро" id="names" value="">
+    <input type="text" placeholder="Иван,Гошо,Пешо,Тошо,Димитър,Миро" id="names" autofocus value="">
     <label>Имена на смени разделени със запетая (броя на елементи в това поле, трябва да е равен на броя на елементи в
         горното поле):</label>
     <input type="text" placeholder="От 5ч.,От 14:00ч.,От 14:00ч.,От 8ч.,От 6ч.,Почивка" id="shifts" value="">
     <label>Брой дни в месеца:</label>
     <input type="text" placeholder="28 или 29 или 30 или 31" id="days" value="">
     <div id="buttonContainer">
-        <button id="genIt" autofocus>ГЕНЕРИРАЙ</button>
+        <button id="genIt">ГЕНЕРИРАЙ</button>
     </div>
     <div>
         <p></p>
@@ -37,39 +37,33 @@
 
     <script>
         const button = document.getElementById('genIt');
-
         button.addEventListener('click', () => genSchedule());
 
         function genSchedule() {
             allShiftForMonthArr = [];
-
             const peopleArr = document.getElementById('names').value.split(',');
             const shiftsArr = document.getElementById('shifts').value.split(',');
             const days = document.getElementById('days').value;
             const checkPersonDoublicated = [];
-
             generateSchedule(days, peopleArr, checkPersonDoublicated, shiftsArr);
         }
 
-        function randomIndexForPeopleArr(indexOfPeopleArr) {
-            const personIndex = Math.floor(Math.random() * 6);
-
-            if (!indexOfPeopleArr.includes(personIndex) && indexOfPeopleArr.length < 6) {
+        function randomIndexForPeopleArr(indexOfPeopleArr, peopleArr) {
+            const personIndex = Math.floor(Math.random() * peopleArr.length);
+            if (!indexOfPeopleArr.includes(personIndex) && indexOfPeopleArr.length < peopleArr.length) {
                 indexOfPeopleArr.push(personIndex);
-                randomIndexForPeopleArr(indexOfPeopleArr);
+                randomIndexForPeopleArr(indexOfPeopleArr, peopleArr);
             } else {
-                if (indexOfPeopleArr.length < 6) {
-                    return randomIndexForPeopleArr(indexOfPeopleArr);
+                if (indexOfPeopleArr.length < peopleArr.length) {
+                    return randomIndexForPeopleArr(indexOfPeopleArr, peopleArr);
                 }
-
                 return;
             }
         };
 
         function generateSchedule(days, peopleArr, checkPersonDoublicated, shiftsArr) {
             document.getElementById('table').innerHTML = '';
-
-            randomIndexForPeopleArr(checkPersonDoublicated);
+            randomIndexForPeopleArr(checkPersonDoublicated, peopleArr);
             genAllMonthShifts(days, shiftsArr);
             renderSchedule(days, peopleArr, checkPersonDoublicated, allShiftForMonthArr);
         };
